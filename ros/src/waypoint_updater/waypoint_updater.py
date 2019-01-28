@@ -2,10 +2,12 @@
 
 import numpy as np
 import rospy
+import math
+
+from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint
 from scipy.spatial import KDTree
-import math
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -51,12 +53,10 @@ class WaypointUpdater(object):
         rate = rospy.Rate(50)
         while not rospy.is_shutdown():
             if self.pose and self.base_waypoints:
-                print("closet waypoint")
                 closest_waypoint_idx = self.get_closest_waypoint_idx()
                 self.publish_waypoints(closest_waypoint_idx)
-                print("closet waypoint is ", closest_waypoint_idx)
             rate.sleep()
-            print("finding closet waypoint")
+
 
     def get_closest_waypoint_idx(self):
         x = self.pose.pose.position.x
@@ -75,7 +75,7 @@ class WaypointUpdater(object):
             prev_vect = np.array(prev_coord)
             pos_vect = np.array([x,y])
     
-            val = np.dot(cl_vect-prev_vect, pos_vect-cl_vect)
+            val = np.dot(cl_vect - prev_vect, pos_vect - cl_vect)
 
             if val > 0:
                 closest_idx = (closest_idx + 1) % len(self.waypoints_2d)
@@ -110,7 +110,7 @@ class WaypointUpdater(object):
 
     def decelerate_waypoints(self, waypoints, closest_idx):
         temp = []
-        for i, wp in enumerate(waypoints)
+        for i, wp in enumerate(waypoints) :
             p = Waypoint()
             p.pose = wp.pose
             stop_idx = max(self.stopline_wp_idx - closest_idx-2,0)

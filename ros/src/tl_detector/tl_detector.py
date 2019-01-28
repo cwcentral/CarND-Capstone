@@ -153,7 +153,10 @@ class TLDetector(object):
                    line_wp_idx = temp_wp_idx
 
         if closest_light:
+
+            # process true image
             state = self.get_light_state(light)
+
             return light_wpi_idx, state
 
         self.waypoints = None
