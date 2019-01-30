@@ -30,6 +30,7 @@ class TLClassifier(object):
 
         self.sess = tf.Session(graph=self.detection_graph)
 
+        # See TL message
         self.light_colors = {
             1 : TrafficLight.GREEN,
             2 : TrafficLight.RED,
@@ -61,11 +62,11 @@ class TLClassifier(object):
         """
         #TODO implement light color prediction
 
-
         image_np = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
         #image_np = np.expand_dims(image, axis=0)
-        (boxes, scores, classes, num) = self.sess.run([self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections], 
-                                        feed_dict={image_tensor: image_np})
+
+        (boxes, scores, classes, num) = self.sess.run([self.detection_boxes, self.detection_scores, self.detection_classes, self.detection_number], 
+                                        feed_dict={self.image_tensor: image_np})
 
         # Remove unnecessary dimensions
         scores = np.squeeze(scores)
@@ -74,8 +75,10 @@ class TLClassifier(object):
 
         #filter_boxes(0.5, boxes, scores, classes)
 
-        if scores[idx] >= 0.5:
-           color_idx = int(classes[ind])
+        if scores is not None and scores[idx] >= 0.5:
+           class_type_id = classes[idx]
+           color_idx = int(classes[idx])
+           print((class_type_id, scores[idx], color_idx))
            return self.light_colors[color_idx]
 
         return TrafficLight.UNKNOWN

@@ -46,6 +46,7 @@ class WaypointUpdater(object):
         self.base_waypoints = None
         self.waypoints_2d = None
         self.waypoint_tree = None
+        self.stopline_wp_idx = -1
 
         self.loop()
 
@@ -99,12 +100,12 @@ class WaypointUpdater(object):
 
         closest_idx = self.get_closest_waypoint_idx()
         farthest_idx = closest_idx + LOOKAHEAD_WPS
-        base_waypoints = self.base_lane.waypoints[closest_idx: farthest_idx]
+        base_points = self.base_waypoints.waypoints[closest_idx: farthest_idx]
 
         if self.stopline_wp_idx == -1 or (self.stopline_wp_idx >= farthest_idx):
-            lane.waypoints = base_waypoints
+            lane.waypoints = base_points
         else:
-            lane.waypoints = self.decelerate_waypoints(base_waypoints, closest_idx)
+            lane.waypoints = self.decelerate_waypoints(base_points, closest_idx)
 
         return lane
 

@@ -4,6 +4,7 @@ from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped, Pose
 from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
+from scipy.spatial import KDTree
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from light_classification.tl_classifier import TLClassifier
@@ -21,6 +22,7 @@ class TLDetector(object):
         self.waypoints = None
         self.camera_image = None
         self.lights = []
+        self.waypoints_2d = None
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -56,6 +58,10 @@ class TLDetector(object):
 
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
+        # create KDtree here too
+        if not self.waypoints_2d:
+            self.waypoints_2d = [[wp.pose.pose.position.x, wp.pose.pose.position.y] for wp in waypoints.waypoints]
+            self.waypoint_tree = KDTree(self.waypoints_2d)
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
@@ -139,9 +145,10 @@ class TLDetector(object):
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
         if(self.pose):
-            car_position = self.get_closest_waypoint(self.pose.pose)
+            #TODO find the closest visible traffic light (if one exists)
+            car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x,
+                                                   self.pose.pose.position.y)
 
-        #TODO find the closest visible traffic light (if one exists)
             diff = len(self.waypoints.waypoints)
             for i, light in enumerate(self.lights):
                 line = stop_line_positions[i]
@@ -153,11 +160,9 @@ class TLDetector(object):
                    line_wp_idx = temp_wp_idx
 
         if closest_light:
-
             # process true image
-            state = self.get_light_state(light)
-
-            return light_wpi_idx, state
+            state = self.get_light_state(closest_light)
+            return line_wp_idx, state
 
         self.waypoints = None
 
