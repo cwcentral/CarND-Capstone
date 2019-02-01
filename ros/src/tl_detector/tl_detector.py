@@ -50,6 +50,7 @@ class TLDetector(object):
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
+        self.last_light_state = TrafficLight.UNKNOWN
 
         rospy.spin()
 
@@ -159,9 +160,11 @@ class TLDetector(object):
                    closest_light = light
                    line_wp_idx = temp_wp_idx
 
+
         if closest_light:
             # process true image
             state = self.get_light_state(closest_light)
+            #print("Light State: ", state)
             return line_wp_idx, state
 
         self.waypoints = None

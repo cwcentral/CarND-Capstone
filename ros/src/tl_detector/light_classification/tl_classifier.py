@@ -14,6 +14,7 @@ import roslib
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from scipy.stats import norm
+from mercurial.encoding import lower
 
 #
 # See https://github.com/udacity/CarND-Object-Detection-Lab/blob/master/CarND-Object-Detection-Lab.ipynb
@@ -58,95 +59,51 @@ class TLClassifier(object):
                 tf.import_graph_def(od_graph_def, name='')
         return graph
 
-    def get_color_image(self, img, lower, upper):
-        hsv_image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(img, np.array(lower, dtype = "uint8"), np.array(upper, dtype = "uint8"))
-        out_img = cv2.bitwise_and(img, img, mask = mask)
-        return out_img
+    def hasColor(self, img, lower, upper):
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, lower, upper)
+        img_after = cv2.bitwise_and(img,img, mask=mask)
+        hsv_channels = cv2.split(img_after);
+        ret, img_bin = cv2.threshold(hsv_channels[2], 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        im3, contours, hierarchy = cv2.findContours(img_bin,cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+       
+#         try:
+#             cv2.imshow("Binary Window", img_bin)
+#             cv2.waitKey(3)
+#         except CvBridgeError as e:
+#             print(e)
 
-    def to_binary_sobel(self, img, 
-                        s_thresh=(175,255), 
-                        sx_thresh=(35, 100), 
-                        gray_thresh=[220, 255],
-                        upper=[10, 255, 255],
-                        lower=[179, 255, 255]):
-        img = np.copy(img)
-        
-        # get yellow channel
-        yellow = self.get_color_image(img, lower, upper)
-        yellow = cv2.cvtColor(yellow, cv2.COLOR_BGR2GRAY)
-        yellow_bin = np.zeros_like(yellow)
-        yellow_bin[(yellow >= gray_thresh[0]) & (yellow <= gray_thresh[1])]=1  
-            
-        # Convert to HLS color space and separate the SL channels
-        hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS).astype(np.float)
-        l_channel = hls[:,:,1]
-        s_channel = hls[:,:,2]
-        # Sobel x filter as in lecture
-        sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0) # Take the derivative in x
-        abs_sobelx = np.absolute(sobelx) # Absolute x derivative to accentuate lines away from horizontal
-        scaled_sobel = np.uint8(255*abs_sobelx/np.max(abs_sobelx))
-        
-        # Threshold x gradient
-        sxbinary = np.zeros_like(scaled_sobel)
-        sxbinary[(scaled_sobel >= sx_thresh[0]) & (scaled_sobel <= sx_thresh[1])] = 1
-        
-        # Threshold color channel, more yellow
-        s_binary = np.zeros_like(s_channel)
-        s_binary[(s_channel >= s_thresh[0]) & (s_channel <= s_thresh[1])] = 1
-    
-        #color_binary = np.dstack(( np.zeros_like(sxbinary), sxbinary, s_binary)) * 255
-    
-        # Create the binary image of all the above channels
-        color_binary = np.zeros_like(s_binary)
-        color_binary[(sxbinary == 1) | (s_binary == 1) | (yellow_bin == 1)] = 1
-    
-        return color_binary
+        if len(contours) > 4:
+            return True
 
+        return False
 
     def get_color(self, img):
-        
-        lower_yellow = np.array([15,0,0])
+        lower_yellow = np.array([15, 0, 0])
         upper_yellow = np.array([36, 255, 255])
        
-        lower_red = np.array([0,42,42])
-        upper_red = np.array([10,255,255])
+        lower_red = np.array([0, 50, 50])
+        upper_red = np.array([0, 255, 255])
        
-        lower_green = np.array([60,60,60])
-        upper_green = np.array([80,255,255])
-
-       
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-        yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
-        img_binary_yellow = cv2.bitwise_and(img,img, mask=yellow_mask)
-
-        red_mask = cv2.inRange(hsv, lower_red, upper_red)
-        img_binary_red = cv2.bitwise_and(img,img, mask=red_mask)
-
-        gr_mask = cv2.inRange(hsv, lower_green, upper_green)
-        img_binary_gr = cv2.bitwise_and(img,img, mask=gr_mask)
+        lower_green = np.array([60, 60, 60])
+        upper_green = np.array([80, 255, 255])
         
-        try:
-            cv2.imshow("Binary Window R", img_binary_red)
-            cv2.imshow("Binary Window Y" , img_binary_yellow)
-            cv2.imshow("Binary Window G", img_binary_gr)
-            cv2.waitKey(3)
-
-        except CvBridgeError as e:
-            print(e)
-
-#         histr = cv2.calcHist([img],[2],None,[256],[0,256]) 
-#         found_pos_r = np.argmax(histr[0:histr.shape[0]])
-#  
-#         histg = cv2.calcHist([img],[1],None,[256],[0,256]) 
-#         found_pos_g = np.argmax(histg[0:histg.shape[0]])
-#  
-#         print('[INFO] R: %d [%d]   G: %d [%d]' % (found_pos_r, 
-# 				histr[found_pos_r], 
-# 				found_pos_g, 
-# 				histg[found_pos_g]))
-
+        if self.hasColor(img, lower_red, upper_red):
+            return TrafficLight.RED
+        elif self.hasColor(img, lower_yellow, upper_yellow):
+            return TrafficLight.YELLOW
+        elif self.hasColor(img, lower_green, upper_green):
+            return TrafficLight.GREEN
+               
+        return TrafficLight.UNKNOWN
+           
+#         try:
+#             
+#             cv2.imshow("Binary Window", image_binary)
+#             cv2.waitKey(3)
+# 
+#         except CvBridgeError as e:
+#             print(e)
 
 
     def get_classification(self, image):
@@ -201,22 +158,31 @@ class TLClassifier(object):
                     cv2.rectangle(image,(x1_o,y1_o),(x2_o,y2_o),(0,255,255),2)
                     self.blank_image = image
 
-        try:
-            cv2.imshow("Detection Window", self.blank_image)
-            cv2.waitKey(3)
+#         try:
+#             cv2.imshow("Detection Window", self.blank_image)
+#             cv2.waitKey(3)
+# 
+#         except CvBridgeError as e:
+#             print(e)
 
-        except CvBridgeError as e:
-            print(e)
 
-
-        for obj in filtered_results:
-            x1_o = obj["bb_o"][0] 
-            y1_o = obj["bb_o"][1]
-            x2_o = obj["bb_o"][2]
-            y2_o = obj["bb_o"][3]
+        if len(filtered_results) > 0:
+            x1_o = filtered_results[0]["bb_o"][0] 
+            y1_o = filtered_results[0]["bb_o"][1]
+            x2_o = filtered_results[0]["bb_o"][2]
+            y2_o = filtered_results[0]["bb_o"][3]
             roi = self.blank_image[y1_o:y2_o, x1_o:x2_o]
             # Use lesson on histograms from CarND-Advanced-Lane-Lines
-            self.get_color(roi)
+            return self.get_color(roi)
+            
+#         for obj in filtered_results:
+#             x1_o = obj["bb_o"][0] 
+#             y1_o = obj["bb_o"][1]
+#             x2_o = obj["bb_o"][2]
+#             y2_o = obj["bb_o"][3]
+#             roi = self.blank_image[y1_o:y2_o, x1_o:x2_o]
+#             # Use lesson on histograms from CarND-Advanced-Lane-Lines
+#             return self.get_color(roi)
             
         
 
