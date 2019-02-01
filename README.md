@@ -2,27 +2,27 @@
 
 In this project, we configure and execute a system itegrated solution that runs in a simulator and on Udacity's Carla automobile.   
    
-### Goals
-1. Launch correctly using the launch files provided in the capstone repo. 
+## Goals
+* Launch correctly using the launch files provided in the capstone repo. 
 
 The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively. 
 
 Note the site.launch did not transmit traffic light waypoint information. Thus the course code isincomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
 
 
-2. Smoothly follow waypoints in the simulator. 
+* Smoothly follow waypoints in the simulator. 
 
 Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
 
-3. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py.
+* Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py.
 
 We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
 
-4. Stop at traffic lights when needed.
+* Stop at traffic lights when needed.
 
 This was confirmed in the video below.
 
-5. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled.
+* Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled.
 Publish throttle, steering, and brake commands at 50hz.
 
 This was confirmed in the video below. And running "rostopic hz"
@@ -34,11 +34,11 @@ Simulator result using STYX:
 
 ## Notes
 
-The following system architecture was used:
+### The following system architecture was used:
 
 <img src="output/model.png" width="480" alt="Combined Image" />
 
-For traffic light detection, I used the Tensorflow model zoo: ssd_mobilenet_v1_coco_11_06_2017 frozen graph, which I included in this repo.
+### For traffic light detection, I used the Tensorflow model zoo: ssd_mobilenet_v1_coco_11_06_2017 frozen graph, which I included in this repo.
 
 This graph is based on training with the COCO dataset and has a traffic light class. After detection of traffic lights, I was able to perform detection of the light color using similar techniques as from the Advanced-Lane-Lines project I completed eariler in the course.
 
