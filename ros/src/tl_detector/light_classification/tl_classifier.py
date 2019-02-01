@@ -97,15 +97,6 @@ class TLClassifier(object):
                
         return TrafficLight.UNKNOWN
            
-#         try:
-#             
-#             cv2.imshow("Binary Window", image_binary)
-#             cv2.waitKey(3)
-# 
-#         except CvBridgeError as e:
-#             print(e)
-
-
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
 
@@ -133,6 +124,7 @@ class TLClassifier(object):
 
         height, width, _ = image.shape
         self.blank_image = np.zeros((height, width, 3), np.uint8)
+ 
 
         if scores is not None: 
             filtered_results = []
@@ -161,10 +153,9 @@ class TLClassifier(object):
 #         try:
 #             cv2.imshow("Detection Window", self.blank_image)
 #             cv2.waitKey(3)
-# 
+#  
 #         except CvBridgeError as e:
 #             print(e)
-
 
         if len(filtered_results) > 0:
             x1_o = filtered_results[0]["bb_o"][0] 

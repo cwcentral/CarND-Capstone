@@ -12,7 +12,18 @@ import tf
 import cv2
 import yaml
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
+
+# When GPU enable --  chaneg this to 2
+#image_rate = 2
+# STYX NON GPU
+image_rate = 18
+
+# counter
+image_rate_ctn = 0
+
+# test mode . set to FALSE if using a BAG file
+USE_WAYPOINT_PUBLISHER = True
 
 class TLDetector(object):
     def __init__(self):
@@ -68,6 +79,9 @@ class TLDetector(object):
         self.lights = msg.lights
 
     def image_cb(self, msg):
+        global image_rate
+        global image_rate_ctn
+        
         """Identifies red lights in the incoming camera image and publishes the index
             of the waypoint closest to the red light's stop line to /traffic_waypoint
 
@@ -77,25 +91,35 @@ class TLDetector(object):
         """
         self.has_image = True
         self.camera_image = msg
-        light_wp, state = self.process_traffic_lights()
+        
+        if (image_rate_ctn < 30) or ((image_rate_ctn % image_rate) == 0):
+            
+            if not USE_WAYPOINT_PUBLISHER:
+                print('no planner')
+                state = self.process_traffic_light_image()
+            else:
+                light_wp, state = self.process_traffic_lights()
 
-        '''
-        Publish upcoming red lights at camera frequency.
-        Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-        of times till we start using it. Otherwise the previous stable state is
-        used.
-        '''
-        if self.state != state:
-            self.state_count = 0
-            self.state = state
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
-            self.last_wp = light_wp
-            self.upcoming_red_light_pub.publish(Int32(light_wp))
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-        self.state_count += 1
+            '''
+            Publish upcoming red lights at camera frequency.
+            Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
+            of times till we start using it. Otherwise the previous stable state is
+            used.
+            '''
+            if USE_WAYPOINT_PUBLISHER:
+                if self.state != state:
+                    self.state_count = 0
+                    self.state = state
+                elif self.state_count >= STATE_COUNT_THRESHOLD:
+                    self.last_state = self.state
+                    light_wp = light_wp if state == TrafficLight.RED else -1
+                    self.last_wp = light_wp
+                    self.upcoming_red_light_pub.publish(Int32(light_wp))
+                else:
+                    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                self.state_count += 1
+
+        image_rate_ctn = image_rate_ctn + 1
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -110,6 +134,14 @@ class TLDetector(object):
         #TODO implement
         closest_idx = self.waypoint_tree.query([x, y], 1)[1]
         return 0
+
+    def process_traffic_light_image(self):
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        #Get classification
+        sstate = self.light_classifier.get_classification(cv_image)
+        print("[INFO] Light State: ", sstate)
+        return sstate
+
 
     def get_light_state(self, light):
         """Determines the current color of the traffic light
@@ -164,7 +196,7 @@ class TLDetector(object):
         if closest_light:
             # process true image
             state = self.get_light_state(closest_light)
-            #print("Light State: ", state)
+            print("[INFO] Light State: ", state)
             return line_wp_idx, state
 
         self.waypoints = None
