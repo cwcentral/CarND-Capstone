@@ -19,17 +19,17 @@ In this project, we configure and execute a system itegrated solution that runs 
 1. Launch correctly using the launch files provided in the capstone repo. The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively.  
 
 
-Note the site.launch did not transmit traffic light waypoint information. Thus the course code is incomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
+Note the site.launch did not transmit traffic light waypoint information. Thus the course code is incomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to bypass the traffic light waypoint requirements and just detect lights.
 
 
 
-2. Smoothly follow waypoints in the simulator. Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
+2. Smoothly follow waypoints in the simulator. Since I had numerous ROS integration errors with python and no access to a  GPU, I had to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down and start missing waypoints.
 
-3. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
+3. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below (24mph).
 
-4. Stop at traffic lights when needed. This was confirmed in the video below.
+4. Stop at traffic lights when needed. This was confirmed in the video below (especially at start, it's always red!).
 
-5. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz"
+5. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz" on specific topics and confirm a 50Hz rate.
 
 
 
@@ -46,7 +46,7 @@ Simulator result using simulator/styx (VIDEO):
 
 ### For traffic light detection, I used the Tensorflow model zoo: ssd_mobilenet_v1_coco_11_06_2017 frozen graph, which I included in this repo.
 
-This graph is based on training with the COCO dataset and has a traffic light class. After detection of traffic lights, I was able to perform detection of the light color using similar techniques as from the Advanced-Lane-Lines project I completed eariler in the course.
+This graph is based on training with the COCO dataset and has a traffic light class. After detection of traffic lights, I was able to perform detection of the light color using similar techniques as from the Advanced-Lane-Lines project I completed eariler in the course. Transfer learning can be applied to make the evaluation more accurate and faster, but that can be done at a later time!
 
 Styx mode (styx.launch)
 
