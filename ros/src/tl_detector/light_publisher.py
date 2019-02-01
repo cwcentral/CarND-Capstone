@@ -11,6 +11,7 @@ import numpy as np
 import rospkg
 import math
 
+# pub light positions
 class TLPublisher(object):
     def __init__(self):
         rospy.init_node('tl_publisher')
@@ -57,7 +58,6 @@ class TLPublisher(object):
         pose.pose.orientation = Quaternion(*q)
 
         return pose
-
 
 if __name__ == '__main__':
     try:

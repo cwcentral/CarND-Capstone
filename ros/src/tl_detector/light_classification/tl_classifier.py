@@ -21,6 +21,10 @@ from mercurial.encoding import lower
 # Section: Object detection Inference
 #
 
+# USES THE COCO DATASET
+# ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+#
 SSD_GRAPH_FILE = 'light_classification/frozen_inference_graph.pb'
 
 class TLClassifier(object):
