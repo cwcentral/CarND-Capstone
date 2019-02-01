@@ -6,7 +6,7 @@ In this project, we configure and execute a system itegrated solution that runs 
 1. Launch correctly using the launch files provided in the capstone repo. The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively.  
 
 
-Note the site.launch did not transmit traffic light waypoint information. Thus the course code isincomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
+Note the site.launch did not transmit traffic light waypoint information. Thus the course code is incomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
 
 
 
