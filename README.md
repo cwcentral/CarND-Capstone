@@ -35,10 +35,15 @@ Simulator result using STYX:
 
 This graph is based on training with the COCO dataset and has a traffic light class. After detection of traffic lights, I was able to perform detection of the light color using similar techniques as from the Advanced-Lane-Lines project I completed eariler in the course.
 
+Styx mode (styx.launch)
+
 <img src="output/lights1.png" width="480" alt="Combined Image" />
 
 <img src="output/lights2.png" width="480" alt="Combined Image" />
 
+Site mode (site.launch)
+
+<img src="output/lights3.png" width="480" alt="Combined Image" />
 
 
 ## Compiling on Udacity workspace
