@@ -20,7 +20,7 @@ Note the site.launch did not transmit traffic light waypoint information. Thus t
 
 
 
-Simulator result using STYX:
+Simulator result using simulator/styx (VIDEO):
 
 [![Output](output/video.png)](https://youtu.be/ElpkiZRLsCU "Click to Play Video")
 
