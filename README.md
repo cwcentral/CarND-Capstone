@@ -3,20 +3,20 @@
 In this project, we configure and execute a system itegrated solution that runs in a simulator and on Udacity's Carla automobile.   
    
 ## Goals
-* Launch correctly using the launch files provided in the capstone repo. 
+1. Launch correctly using the launch files provided in the capstone repo. The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively.  
 
-The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively. 
 
 Note the site.launch did not transmit traffic light waypoint information. Thus the course code isincomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
 
 
-1. Smoothly follow waypoints in the simulator. Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
 
-2. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
+2. Smoothly follow waypoints in the simulator. Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
 
-3. Stop at traffic lights when needed. This was confirmed in the video below.
+3. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
 
-4. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz"
+4. Stop at traffic lights when needed. This was confirmed in the video below.
+
+5. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz"
 
 
 
