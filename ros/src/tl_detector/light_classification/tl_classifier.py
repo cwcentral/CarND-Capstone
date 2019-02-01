@@ -150,12 +150,11 @@ class TLClassifier(object):
                     cv2.rectangle(image,(x1_o,y1_o),(x2_o,y2_o),(0,255,255),2)
                     self.blank_image = image
 
-#         try:
-#             cv2.imshow("Detection Window", self.blank_image)
-#             cv2.waitKey(3)
-#  
-#         except CvBridgeError as e:
-#             print(e)
+#        try:
+#            cv2.imshow("Detection Window", self.blank_image)
+#            cv2.waitKey(3)
+#        except CvBridgeError as e:
+#            print(e)
 
         if len(filtered_results) > 0:
             x1_o = filtered_results[0]["bb_o"][0] 
