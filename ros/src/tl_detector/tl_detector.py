@@ -17,7 +17,7 @@ STATE_COUNT_THRESHOLD = 2
 # When GPU enable --  chaneg this to 2
 #image_rate = 2
 # STYX NON GPU
-image_rate = 18
+image_rate = 20
 
 # counter
 image_rate_ctn = 0
