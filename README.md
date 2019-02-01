@@ -10,22 +10,15 @@ The launch/styx.launch and launch/site.launch files will be used to test code in
 Note the site.launch did not transmit traffic light waypoint information. Thus the course code isincomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
 
 
-* Smoothly follow waypoints in the simulator. 
+1. Smoothly follow waypoints in the simulator. Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
 
-Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
+2. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
 
-* Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py.
+3. Stop at traffic lights when needed. This was confirmed in the video below.
 
-We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
+4. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz"
 
-* Stop at traffic lights when needed.
 
-This was confirmed in the video below.
-
-* Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled.
-Publish throttle, steering, and brake commands at 50hz.
-
-This was confirmed in the video below. And running "rostopic hz"
 
 Simulator result using STYX:
 
