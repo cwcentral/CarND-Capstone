@@ -22,14 +22,14 @@ Note the site.launch did not transmit traffic light waypoint information. Thus t
 
 Simulator result using STYX:
 
-[![Output](output/run.png)](https://youtu.be/nT73ys7jq6k "Click to Play Video")
+[![Output](output/video.png)](https://youtu.be/ElpkiZRLsCU "Click to Play Video")
 
 
 ## Notes
 
 ### The following system architecture was used:
 
-<img src="output/model.png" width="480" alt="Combined Image" />
+<img src="output/arch.png" width="480" alt="Combined Image" />
 
 ### For traffic light detection, I used the Tensorflow model zoo: ssd_mobilenet_v1_coco_11_06_2017 frozen graph, which I included in this repo.
 
