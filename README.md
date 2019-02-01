@@ -1,10 +1,12 @@
-# CarND-Capstone
-
-**NOTE: This project was built natively on Ubuntu Ubuntu 17.10 using ROS Melodic Morenia.**
+**NOTE: This project was built natively on Ubuntu 17.10 using ROS Melodic Morenia.**
 
 **Hardware specs are:**
  1. Intel® Core™ i7-4710HQ CPU @ 2.50GHz × 8**
  2. GeForce GTX 760/PCIe/SSE2 -- NOT USED Due to ROS conflicts!
+
+
+
+# CarND-Capstone
 
 In this project, we configure and execute a system itegrated solution that runs in a simulator and on Udacity's Carla automobile.   
    
