@@ -8,6 +8,13 @@ Could not use Udacity workspace due to
 1. non-gpu mode has a miss configured ROS -- catkin_make was not found
 2. gpu mode catkin_make build errored with "ImportError: No module named terminal_color"
 
+To fix gpu mode perform the following:
+* pip uninstall catkin_pkg
+* pip install --upgrade pip
+* pip install catkin_pkg
+
+The gpu workspace should now work.
+
 =======================================================================
 
 
