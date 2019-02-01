@@ -4,6 +4,11 @@
  1. Intel® Core™ i7-4710HQ CPU @ 2.50GHz × 8**
  2. GeForce GTX 760/PCIe/SSE2 -- NOT USED Due to ROS conflicts!
 
+Could not use Udacity workspace due to 
+1. non-gpu mode has a miss configured ROS -- catkin_make was not found
+2. gpu mode catkin_make build errored with "ImportError: No module named terminal_color"
+
+=======================================================================
 
 
 # CarND-Capstone
