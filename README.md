@@ -1,3 +1,80 @@
+**NOTE: This project was built natively on Ubuntu 17.10 using ROS Melodic Morenia.**
+
+**Hardware specs are:**
+ 1. Intel® Core™ i7-4710HQ CPU @ 2.50GHz × 8**
+ 2. GeForce GTX 760/PCIe/SSE2 -- NOT USED Due to ROS conflicts!
+
+Could not use Udacity workspace due to 
+1. non-gpu mode has a miss configured ROS -- catkin_make was not found
+2. gpu mode catkin_make build errored with "ImportError: No module named terminal_color"
+
+=======================================================================
+
+
+# CarND-Capstone
+
+In this project, we configure and execute a system itegrated solution that runs in a simulator and on Udacity's Carla automobile.   
+   
+## Goals
+1. Launch correctly using the launch files provided in the capstone repo. The launch/styx.launch and launch/site.launch files will be used to test code in the simulator and on the vehicle respectively.  
+
+
+Note the site.launch did not transmit traffic light waypoint information. Thus the course code is incomplete. I have a flag called USE_WAYPOINT_PUBLISHER when set to false bypasses the traffic light waypoint requirements.
+
+
+
+2. Smoothly follow waypoints in the simulator. Since I had nummerous ROS integration errors with Python and usage of a GPU, I have to run image processing and AI routines at 10hz. I could not run at framerate (50hz) as my cpu would bog down.
+
+3. Respect the target top speed set for the waypoints' twist.twist.linear.x in waypoint_loader.py. We ran at 40km/hr which in the simluator is about 24mph. This was confirmed in the video below.
+
+4. Stop at traffic lights when needed. This was confirmed in the video below.
+
+5. Stop and restart PID controllers depending on the state of /vehicle/dbw_enabled. Publish throttle, steering, and brake commands at 50hz. This was confirmed in the video below. And running "rostopic hz"
+
+
+
+Simulator result using simulator/styx (VIDEO):
+
+[![Output](output/video.png)](https://youtu.be/ElpkiZRLsCU "Click to Play Video")
+
+
+## Notes
+
+### The following system architecture was used:
+
+<img src="output/arch.png" width="480" alt="Combined Image" />
+
+### For traffic light detection, I used the Tensorflow model zoo: ssd_mobilenet_v1_coco_11_06_2017 frozen graph, which I included in this repo.
+
+This graph is based on training with the COCO dataset and has a traffic light class. After detection of traffic lights, I was able to perform detection of the light color using similar techniques as from the Advanced-Lane-Lines project I completed eariler in the course.
+
+Styx mode (styx.launch)
+
+<img src="output/lights1.png" width="480" alt="Combined Image" />
+
+<img src="output/lights2.png" width="480" alt="Combined Image" />
+
+Site mode (site.launch)
+
+<img src="output/lights3.png" width="480" alt="Combined Image" />
+
+
+## Compiling on Udacity workspace
+ 
+catkin_make may present errors like: 
+  
+    dbw_mkz_msgsConfig.cmake
+    dbw_mkz_msgs-config.cmake
+
+And can be solved with:
+
+sudo apt-get update
+sudo apt-get install -y ros-kinetic-dbw-mkz-msgs
+cd /home/workspace/CarND-Capstone/ros
+rosdep install --from-paths src --ignore-src --rosdistro=kinetic -y
+
+
+
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
 Please use **one** of the two installation options, either native **or** docker installation.
