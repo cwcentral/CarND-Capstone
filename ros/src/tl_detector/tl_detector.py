@@ -108,17 +108,20 @@ class TLDetector(object):
             used.
             '''
             if USE_WAYPOINT_PUBLISHER:
-                if self.state != state:
-                    self.state_count = 0
-                    self.state = state
-                elif self.state_count >= STATE_COUNT_THRESHOLD:
-                    self.last_state = self.state
-                    light_wp = light_wp if state == TrafficLight.RED else -1
-                    self.last_wp = light_wp
-                    self.upcoming_red_light_pub.publish(Int32(light_wp))
-                else:
-                    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-                self.state_count += 1
+                try:
+                    if self.state != state:
+                        self.state_count = 0
+                        self.state = state
+                    elif self.state_count >= STATE_COUNT_THRESHOLD:
+                        self.last_state = self.state
+                        light_wp = light_wp if state == TrafficLight.RED else -1
+                        self.last_wp = light_wp
+                        self.upcoming_red_light_pub.publish(Int32(light_wp))
+                    else:
+                        self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+                    self.state_count += 1
+                except:
+                    print("invalid state")
 
         image_rate_ctn = image_rate_ctn + 1
 
@@ -175,10 +178,11 @@ class TLDetector(object):
         light = None
         closest_light = None
         line_wp_idx = None
+        local_state = TrafficLight.UNKNOWN
 
         # List of positions that correspond to the line to stop in front of for a given intersection
-        stop_line_positions = self.config['stop_line_positions']
         try:
+            stop_line_positions = self.config['stop_line_positions']
             if(self.pose):
                 #TODO find the closest visible traffic light (if one exists)
                 car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x,
@@ -193,18 +197,20 @@ class TLDetector(object):
                        diff = d
                        closest_light = light
                        line_wp_idx = temp_wp_idx
+
             if closest_light:
                 # process true image
-                state = self.get_light_state(closest_light)
-                print("[INFO] Light State: ", state)
-                return line_wp_idx, state
+                local_state = self.get_light_state(closest_light)
+                print("[INFO] Light State: ", local_state)
+                return line_wp_idx, local_state
     
             #self.waypoints = None
 
         except NameError:
             print('Waypoints not loaded, please check base_waypoints topic in ROS')
 
-        return -1, TrafficLight.UNKNOWN
+        print("[INFO] Light State: ", local_state)
+        return -1, local_state 
 
 if __name__ == '__main__':
     try:
