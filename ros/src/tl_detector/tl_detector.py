@@ -17,7 +17,8 @@ STATE_COUNT_THRESHOLD = 2
 # When GPU enable --  chaneg this to 2
 #image_rate = 2
 # STYX NON GPU
-image_rate = 10 
+image_rate = 3 
+#image_rate = 20 
 
 # counter
 image_rate_ctn = 0
@@ -177,29 +178,31 @@ class TLDetector(object):
 
         # List of positions that correspond to the line to stop in front of for a given intersection
         stop_line_positions = self.config['stop_line_positions']
-        if(self.pose):
-            #TODO find the closest visible traffic light (if one exists)
-            car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x,
+        try:
+            if(self.pose):
+                #TODO find the closest visible traffic light (if one exists)
+                car_wp_idx = self.get_closest_waypoint(self.pose.pose.position.x,
                                                    self.pose.pose.position.y)
 
-            diff = len(self.waypoints.waypoints)
-            for i, light in enumerate(self.lights):
-                line = stop_line_positions[i]
-                temp_wp_idx = self.get_closest_waypoint(line[0], line[1])
-                d = temp_wp_idx - car_wp_idx
-                if d >= 0 and d < diff:
-                   diff = d
-                   closest_light = light
-                   line_wp_idx = temp_wp_idx
+                diff = len(self.waypoints.waypoints)
+                for i, light in enumerate(self.lights):
+                    line = stop_line_positions[i]
+                    temp_wp_idx = self.get_closest_waypoint(line[0], line[1])
+                    d = temp_wp_idx - car_wp_idx
+                    if d >= 0 and d < diff:
+                       diff = d
+                       closest_light = light
+                       line_wp_idx = temp_wp_idx
+            if closest_light:
+                # process true image
+                state = self.get_light_state(closest_light)
+                print("[INFO] Light State: ", state)
+                return line_wp_idx, state
+    
+            #self.waypoints = None
 
-
-        if closest_light:
-            # process true image
-            state = self.get_light_state(closest_light)
-            print("[INFO] Light State: ", state)
-            return line_wp_idx, state
-
-        self.waypoints = None
+        except NameError:
+            print('Waypoints not loaded, please check base_waypoints topic in ROS')
 
         return -1, TrafficLight.UNKNOWN
 
