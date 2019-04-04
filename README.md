@@ -47,8 +47,7 @@ Simulator result using simulator/styx (VIDEO):
 
 On the 3rd iteration, the following ROSBAG was provided from the Udacity team. This is the data gained from running this codebase on the Lincoln MKZ test vehicle:
 
-[![Output](output/videobag.png)](https://drive.google.com/drive/folders/1Hm6scwx5sIKNZevBxbkWbIlZyhSb1DkG?usp=sharing
- "See Videos")
+[![Output](output/videobag.png)](https://drive.google.com/drive/folders/1Hm6scwx5sIKNZevBxbkWbIlZyhSb1DkG?usp=sharing "See Videos")
 
 
 ## Notes
