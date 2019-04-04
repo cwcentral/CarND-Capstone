@@ -45,6 +45,12 @@ Simulator result using simulator/styx (VIDEO):
 [![Output](output/video.png)](https://youtu.be/ElpkiZRLsCU "Click to Play Video")
 
 
+On the 3rd iteration, the following ROSBAG was provided from the Udacity team. This is the data gained from running this codebase on the Lincoln MKZ test vehicle:
+
+[![Output](output/videobag.png)](https://drive.google.com/drive/folders/1Hm6scwx5sIKNZevBxbkWbIlZyhSb1DkG?usp=sharing
+ "See Videos")
+
+
 ## Notes
 
 ### The following system architecture was used:
